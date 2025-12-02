@@ -8,8 +8,56 @@ Play the game online by following this link [here](https://play.aidungeon.io)
 
 Play the game in Colab [here](https://colab.research.google.com/github/AIDungeon/AIDungeon/blob/master/AIDungeon_2.ipynb).
 
-To play the game locally, it is recommended that you have an nVidia GPU with 12 GB or more of memory, and CUDA installed. If you do not have such a GPU, each turn can take a couple of minutes or more for the game to compose its response. To install and play locally:
+## Local Installation
+
+### GGUF Mode (Recommended for Modern GPUs)
+
+GGUF mode uses local LLM models in GGUF format via [llama-cpp-python](https://github.com/abetlen/llama-cpp-python). This is the recommended approach for modern NVIDIA GPUs including the RTX 50xx, 40xx, and 30xx series.
+
+**Requirements:**
+- Python 3.8 or higher
+- NVIDIA GPU with 12GB+ VRAM (e.g., RTX 5060 Ti 16GB)
+- CUDA toolkit installed (for GPU acceleration)
+
+**Installation:**
+```bash
+git clone https://github.com/AIDungeon/AIDungeon/
+cd AIDungeon
+
+# Install with CUDA/GPU support (recommended)
+./install_gguf.sh --gguf --cuda
+
+# Download a GGUF model (Mistral 7B by default)
+./download_gguf_model.sh
+
+# Activate virtual environment and play
+source ./venv/bin/activate
+./play.py --gguf
 ```
+
+**Command line options for GGUF mode:**
+```bash
+./play.py --gguf                          # Use GGUF mode with default settings
+./play.py --gguf --cpu                    # Force CPU-only inference
+./play.py --gguf --model path/to/model.gguf  # Use a specific model file
+./play.py --gguf --gpu-layers 20          # Offload only 20 layers to GPU
+./play.py --gguf --ctx-size 4096          # Larger context window
+```
+
+**Downloading different models:**
+```bash
+# List recommended models
+./download_gguf_model.sh --list
+
+# Download a specific model from Hugging Face
+./download_gguf_model.sh -r TheBloke/Llama-2-13B-Chat-GGUF -m llama-2-13b-chat.Q4_K_M.gguf
+```
+
+### Legacy Mode (TensorFlow 1.15)
+
+The original implementation using TensorFlow 1.15 and GPT-2. Requires Python 3.4-3.7.
+
+```bash
 git clone --branch master https://github.com/AIDungeon/AIDungeon/
 cd AIDungeon
 ./install.sh # Installs system packages and creates python3 virtual environment

@@ -5,7 +5,6 @@ import sys
 import time
 import argparse
 
-from generator.gpt2.gpt2_generator import *
 from story import grammars
 from story.story_manager import *
 from story.utils import *
@@ -17,6 +16,29 @@ parser.add_argument(
     "--cpu",
     action="store_true",
     help="Force using CPU instead of GPU."
+)
+parser.add_argument(
+    "--gguf",
+    action="store_true",
+    help="Use GGUF model format with llama-cpp-python (recommended for modern GPUs)."
+)
+parser.add_argument(
+    "--model",
+    type=str,
+    default=None,
+    help="Path to GGUF model file (only used with --gguf)."
+)
+parser.add_argument(
+    "--gpu-layers",
+    type=int,
+    default=-1,
+    help="Number of layers to offload to GPU. -1 = all layers (only used with --gguf)."
+)
+parser.add_argument(
+    "--ctx-size",
+    type=int,
+    default=2048,
+    help="Context window size for GGUF models (default: 2048)."
 )
 
 
@@ -172,7 +194,20 @@ def play_aidungeon_2(args):
     upload_story = True
 
     print("\nInitializing AI Dungeon! (This might take a few minutes)\n")
-    generator = GPT2Generator(force_cpu=args.cpu)
+    
+    # Initialize the appropriate generator based on arguments
+    if args.gguf:
+        from generator.gguf.gguf_generator import GGUFGenerator
+        generator = GGUFGenerator(
+            model_path=args.model,
+            force_cpu=args.cpu,
+            n_gpu_layers=args.gpu_layers,
+            n_ctx=args.ctx_size
+        )
+    else:
+        from generator.gpt2.gpt2_generator import GPT2Generator
+        generator = GPT2Generator(force_cpu=args.cpu)
+    
     story_manager = UnconstrainedStoryManager(generator)
     print("\n")
 

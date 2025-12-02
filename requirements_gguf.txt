@@ -1,0 +1,23 @@
+# Requirements for GGUF local LLM support
+# 
+# For CUDA support with modern NVIDIA GPUs (including RTX 50xx series),
+# install llama-cpp-python with CUDA enabled:
+#
+#   CMAKE_ARGS="-DGGML_CUDA=on" pip install llama-cpp-python --force-reinstall --upgrade --no-cache-dir
+#
+# For CPU-only inference:
+#   pip install llama-cpp-python
+#
+
+# Core dependencies (same as main project)
+numpy
+pyyaml
+regex
+profanityfilter
+
+# GGUF model support via llama-cpp-python
+# Note: For GPU acceleration, install with CUDA flags as shown above
+llama-cpp-python>=0.2.0
+
+# Optional: Hugging Face Hub for downloading models
+huggingface_hub
