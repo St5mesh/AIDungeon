@@ -66,6 +66,42 @@ source ./venv/bin/activate
 ./play.py
 ```
 
+## Remote Play (via SSH)
+
+You can play AIDungeon from another computer on your network by connecting via SSH to a machine that has AIDungeon installed.
+
+**Basic usage:**
+```bash
+# Connect from a remote machine and play
+ssh -t user@server-ip "/path/to/AIDungeon/play_remote.sh"
+
+# With GGUF mode
+ssh -t user@server-ip "/path/to/AIDungeon/play_remote.sh --gguf"
+
+# Force CPU-only mode
+ssh -t user@server-ip "/path/to/AIDungeon/play_remote.sh --cpu"
+```
+
+**Note:** The `-t` flag is required to allocate a TTY for the interactive game session.
+
+**Setting up a dedicated game server:**
+
+You can configure SSH to automatically launch AIDungeon when a user connects with a specific SSH key. Add the following to your `~/.ssh/authorized_keys` on the server:
+
+```
+command="/path/to/AIDungeon/play_remote.sh --gguf" ssh-rsa AAAAB3... user@client
+```
+
+This restricts that SSH key to only running the game, which is useful for setting up a dedicated game machine.
+
+**Options:**
+The `play_remote.sh` script accepts all the same options as `play.py`:
+- `--cpu` - Force CPU-only mode
+- `--gguf` - Use GGUF model format
+- `--model PATH` - Path to GGUF model file
+- `--gpu-layers N` - Number of layers to offload to GPU
+- `--ctx-size N` - Context window size for GGUF models
+
 ## Finetune the model yourself
 
 Formatting the data. After scraping the data I formatted text adventures into a json dict structure that looked like the following:
