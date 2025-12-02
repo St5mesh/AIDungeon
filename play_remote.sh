@@ -25,7 +25,8 @@
 set -e
 
 # Change to the directory where the script is located
-cd "$(dirname "${0}")"
+# Use BASH_SOURCE for reliable path resolution (handles symlinks)
+cd "$(dirname "${BASH_SOURCE[0]}")"
 BASE_DIR="$(pwd)"
 
 # Function to display error and exit
@@ -40,8 +41,10 @@ if [ ! -t 0 ]; then
 fi
 
 # Activate virtual environment if it exists
-if [ -d "${BASE_DIR}/venv" ]; then
+if [ -f "${BASE_DIR}/venv/bin/activate" ]; then
     source "${BASE_DIR}/venv/bin/activate"
+elif [ -f "${BASE_DIR}/.venv/bin/activate" ]; then
+    source "${BASE_DIR}/.venv/bin/activate"
 fi
 
 # Check if play.py exists
