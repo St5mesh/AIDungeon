@@ -148,7 +148,7 @@ class GGUFGenerator:
             return output["choices"][0]["text"]
         return ""
     
-    def generate(self, prompt, options=None, seed=1):
+    def generate(self, prompt, options=None, seed=1, _retry_count=0):
         """
         Generate a response based on the prompt.
         
@@ -156,10 +156,12 @@ class GGUFGenerator:
             prompt: The input prompt/context.
             options: Optional generation parameters (unused, for API compatibility).
             seed: Random seed (unused, for API compatibility).
+            _retry_count: Internal retry counter to prevent infinite recursion.
             
         Returns:
             Generated text response.
         """
+        MAX_RETRIES = 3
         debug_print = False
         prompt = self.prompt_replace(prompt)
         
@@ -175,8 +177,12 @@ class GGUFGenerator:
         
         result = self.result_replace(text)
         
-        # Retry if result is empty
+        # Retry if result is empty, with limit to prevent infinite recursion
         if len(result) == 0:
-            return self.generate(prompt)
+            if _retry_count < MAX_RETRIES:
+                return self.generate(prompt, options, seed, _retry_count + 1)
+            else:
+                # Return a fallback message if we can't generate anything
+                return "The story continues..."
         
         return result
