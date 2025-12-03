@@ -140,7 +140,7 @@ def get_curated_exposition(
     if setting_key == "fantasy":
         fantasy_flavor = (
             "In the mystical realm where ancient magic flows through the land, "
-            "where dragons soar across twilight skies and legendary heroes forge their destinies, "
+            "where dragons soar across twilight skies and legendary heroes forge their destinies... "
         )
     
     try:

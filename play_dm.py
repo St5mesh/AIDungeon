@@ -12,11 +12,11 @@ from story.utils import *
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 # DM-style prompt template for rich fantasy narration
-DM_PROMPT_TEMPLATE = (
-    "\n[As a masterful Dungeon Master, describe the scene with vivid sensory details. "
-    "Use high fantasy style with sights, sounds, and smells. Include dramatic flair and DnD tropes.]\n"
-    "What do you do next? \n> You"
+DM_INSTRUCTIONS = (
+    "[As a masterful Dungeon Master, describe the scene with vivid sensory details. "
+    "Use high fantasy style with sights, sounds, and smells. Include dramatic flair and DnD tropes.]"
 )
+DM_ACTION_PROMPT = "What do you do next?"
 
 # Scene frame decorators for DnD narrative style
 DM_SCENE_HEADER = "\n" + "=" * 50 + "\n🏰 DUNGEON MASTER\n" + "=" * 50
@@ -32,12 +32,11 @@ class AIPlayer:
         return self.generator.generate_raw(prompt)
 
 
-def format_dm_output(action):
-    """Format the AI-generated action in DnD narrative style."""
+def format_dm_narration(action):
+    """Format the DM narration in DnD narrative style."""
     formatted = DM_SCENE_HEADER + "\n\n"
     formatted += action + "\n\n"
     formatted += DM_SCENE_FOOTER
-    formatted += PLAYER_ACTION_PREFIX
     return formatted
 
 
@@ -55,7 +54,11 @@ def play_dm():
     player = AIPlayer(generator)
 
     while True:
-        action_prompt = story_manager.story_context() + DM_PROMPT_TEMPLATE
+        action_prompt = (
+            story_manager.story_context() + 
+            "\n" + DM_INSTRUCTIONS + "\n" + 
+            DM_ACTION_PROMPT + "\n> You"
+        )
         action = player.get_action(action_prompt)
         print("\n******DEBUG FULL ACTION*******")
         print(action)
@@ -65,10 +68,11 @@ def play_dm():
         if punc > 0:
             action = action[: punc + 1]
         
-        # Format the output with DnD narrative style
-        formatted_action = format_dm_output(action)
-        shown_action = formatted_action + " " + second_to_first_person("You" + action)
-        console_print(shown_action)
+        # Format the DM narration and player action separately
+        dm_narration = format_dm_narration(action)
+        player_action = second_to_first_person("You " + action)
+        shown_output = dm_narration + PLAYER_ACTION_PREFIX + " " + player_action
+        console_print(shown_output)
         story_manager.act(action)
 
 
