@@ -19,7 +19,7 @@ DM_INSTRUCTIONS = (
 DM_ACTION_PROMPT = "What do you do next?"
 
 # Scene frame decorators for DnD narrative style
-# In DM mode, the AI suggests player actions with immersive fantasy narration
+# Formatting for AI-generated player responses to enhance immersion
 NARRATIVE_HEADER = "\n" + "=" * 50 + "\n🏰 SCENE\n" + "=" * 50
 SCENE_FOOTER = "-" * 50
 PLAYER_ACTION_PREFIX = "\n⚔️ YOUR ACTION:"
@@ -70,9 +70,9 @@ def play_dm():
             action = action[: punc + 1]
         
         # Format the scene and player action with DnD narrative style
-        scene_display = format_scene(action)
-        player_action = second_to_first_person("You " + action)
-        shown_output = scene_display + PLAYER_ACTION_PREFIX + " " + player_action
+        formatted_scene = format_scene(action)
+        formatted_action = second_to_first_person("You " + action)
+        shown_output = formatted_scene + PLAYER_ACTION_PREFIX + " " + formatted_action
         console_print(shown_output)
         story_manager.act(action)
 
