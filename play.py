@@ -134,14 +134,24 @@ def get_curated_exposition(
     setting_key, character_key, name, character, setting_description
 ):
     name_token = "<NAME>"
+    
+    # High fantasy flavor prefix for DnD-style immersion
+    fantasy_flavor = ""
+    if setting_key == "fantasy":
+        fantasy_flavor = (
+            "In the mystical realm where ancient magic flows through the land, "
+            "where dragons soar across twilight skies and legendary heroes forge their destinies, "
+        )
+    
     try:
         context = grammars.generate(setting_key, character_key, "context") + "\n\n"
-        context = context.replace(name_token, name)
+        context = fantasy_flavor + context.replace(name_token, name)
         prompt = grammars.generate(setting_key, character_key, "prompt")
         prompt = prompt.replace(name_token, name)
     except:
         context = (
-            "You are "
+            fantasy_flavor
+            + "You are "
             + name
             + ", a "
             + character_key
