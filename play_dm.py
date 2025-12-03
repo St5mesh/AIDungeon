@@ -19,9 +19,10 @@ DM_INSTRUCTIONS = (
 DM_ACTION_PROMPT = "What do you do next?"
 
 # Scene frame decorators for DnD narrative style
-DM_SCENE_HEADER = "\n" + "=" * 50 + "\n🏰 DUNGEON MASTER\n" + "=" * 50
-DM_SCENE_FOOTER = "-" * 50
-PLAYER_ACTION_PREFIX = "\n⚔️  YOUR ACTION:"
+# In DM mode, the AI suggests player actions with immersive fantasy narration
+NARRATIVE_HEADER = "\n" + "=" * 50 + "\n🏰 SCENE\n" + "=" * 50
+SCENE_FOOTER = "-" * 50
+PLAYER_ACTION_PREFIX = "\n⚔️ YOUR ACTION:"
 
 
 class AIPlayer:
@@ -32,11 +33,11 @@ class AIPlayer:
         return self.generator.generate_raw(prompt)
 
 
-def format_dm_narration(action):
-    """Format the DM narration in DnD narrative style."""
-    formatted = DM_SCENE_HEADER + "\n\n"
+def format_scene(action):
+    """Format the scene action in DnD narrative style."""
+    formatted = NARRATIVE_HEADER + "\n\n"
     formatted += action + "\n\n"
-    formatted += DM_SCENE_FOOTER
+    formatted += SCENE_FOOTER
     return formatted
 
 
@@ -68,10 +69,10 @@ def play_dm():
         if punc > 0:
             action = action[: punc + 1]
         
-        # Format the DM narration and player action separately
-        dm_narration = format_dm_narration(action)
+        # Format the scene and player action with DnD narrative style
+        scene_display = format_scene(action)
         player_action = second_to_first_person("You " + action)
-        shown_output = dm_narration + PLAYER_ACTION_PREFIX + " " + player_action
+        shown_output = scene_display + PLAYER_ACTION_PREFIX + " " + player_action
         console_print(shown_output)
         story_manager.act(action)
 
